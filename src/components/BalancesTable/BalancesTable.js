@@ -4,7 +4,7 @@ import BalancesTableColumns from './BalancesTable.columns'
 import { propTypes, defaultProps } from './BalancesTable.props'
 import Table from '../../ui/Table'
 
-import './style.css'
+import './style.scss'
 
 export default class BalancesTable extends React.PureComponent {
   static propTypes = propTypes

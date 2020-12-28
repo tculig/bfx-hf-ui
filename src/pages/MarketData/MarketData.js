@@ -2,7 +2,7 @@ import React from 'react'
 import Joyride, { STATUS } from 'react-joyride'
 import GridLayoutPage from '../../components/GridLayoutPage'
 import { propTypes } from './MarketData.props'
-import './style.css'
+import './style.scss'
 
 export default class MarketData extends React.PureComponent {
   static propTypes = propTypes

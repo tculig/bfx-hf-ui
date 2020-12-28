@@ -30,7 +30,7 @@ import HFUI from './components/HFUI'
 import StoreWrapper from './StoreWrapper'
 
 import './passive_listener_fix'
-import './index.css'
+import './index.scss'
 
 ReactDOM.render((
   <Scrollbars

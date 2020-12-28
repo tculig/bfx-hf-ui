@@ -3,7 +3,7 @@ import { Responsive as RGL, WidthProvider } from 'react-grid-layout'
 
 import { propTypes, defaultProps } from './GridLayout.props'
 import { renderLayoutElement } from './GridLayout.helpers'
-import './style.css'
+import './style.scss'
 
 const GridLayoutP = WidthProvider(RGL)
 

@@ -3,7 +3,7 @@ import Scrollbars from 'react-custom-scrollbars'
 import ClassNames from 'classnames'
 
 import { propTypes, defaultProps } from './Panel.props'
-import './style.css'
+import './style.scss'
 
 export default class Panel extends React.Component {
   static propTypes = propTypes

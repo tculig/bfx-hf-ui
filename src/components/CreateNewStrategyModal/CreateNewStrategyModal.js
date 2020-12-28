@@ -9,7 +9,7 @@ import Button from '../../ui/Button'
 import Dropdown from '../../ui/Dropdown'
 
 import { propTypes, defaultProps } from './CreateNewStrategyModal.props'
-import './style.css'
+import './style.scss'
 
 export default class CreateNewStrategyModal extends React.Component {
   static propTypes = propTypes

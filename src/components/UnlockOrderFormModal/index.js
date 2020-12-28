@@ -2,7 +2,7 @@ import React from 'react'
 
 import Modal from '../../ui/Modal'
 
-import './style.css'
+import './style.scss'
 
 export default class UnlockOrderFormModal extends React.PureComponent {
   render() {

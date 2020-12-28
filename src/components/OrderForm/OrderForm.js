@@ -29,7 +29,7 @@ import SubmitAPIKeysModal from './Modals/SubmitAPIKeysModal'
 import OrderFormMenu from './OrderFormMenu'
 
 import { propTypes, defaultProps } from './OrderForm.props'
-import './style.css'
+import './style.scss'
 
 const HELP_ICON_DISABLED = true // not in design
 const CONTEXT_LABELS = {

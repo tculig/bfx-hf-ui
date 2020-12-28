@@ -4,7 +4,7 @@ import StrategyTradesTableColumns from './StrategyTradesTable.columns'
 import Panel from '../../ui/Panel'
 import Table from '../../ui/Table'
 import { propTypes, defaultProps } from './StrategyTradesTable.props'
-import './style.css'
+import './style.scss'
 
 export default class StrategyTradesTable extends React.PureComponent {
   static propTypes = propTypes

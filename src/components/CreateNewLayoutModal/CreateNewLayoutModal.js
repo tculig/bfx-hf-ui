@@ -6,7 +6,7 @@ import Modal from '../../ui/Modal'
 import Button from '../../ui/Button'
 
 import { propTypes, defaultProps } from './CreateNewLayoutModal.props'
-import './style.css'
+import './style.scss'
 
 export default class CreateNewLayoutModal extends React.Component {
   static propTypes = propTypes

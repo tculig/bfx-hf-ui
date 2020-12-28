@@ -9,7 +9,7 @@ import PLNumber from '../../ui/PLNumber'
 import OBSide from './OBSide'
 import Spinner from '../../ui/Spinner'
 import { propTypes, defaultProps } from './OrderBook.props'
-import './style.css'
+import './style.scss'
 
 // Temporary restriction to suit the design mockups;
 // Remove once the design can handle deep OBs

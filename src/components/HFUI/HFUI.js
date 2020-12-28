@@ -6,12 +6,13 @@ import TradingPage from '../../pages/Trading'
 import StrategyEditorPage from '../../pages/StrategyEditor'
 import MarketDataPage from '../../pages/MarketData'
 import AuthenticationPage from '../../pages/Authentication'
+import TPage from '../../TCode/pages/TPage'
 
 import Navbar from '../Navbar'
 import NotificationsSidebar from '../NotificationsSidebar'
 
 import { propTypes, defaultProps } from './HFUI.props'
-import './style.css'
+import './style.scss'
 
 export default class HFUI extends React.PureComponent {
   static propTypes = propTypes
@@ -74,6 +75,12 @@ export default class HFUI extends React.PureComponent {
             path='/settings'
             render={() => (
               <SettingsPage />
+            )}
+          />
+          <Route
+            path='/t-editor'
+            render={() => (
+              <TPage />
             )}
           />
         </Switch>

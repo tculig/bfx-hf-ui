@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 
 import Button from '../Button'
 import { propTypes, defaultProps } from './PanelSettings.props'
-import './style.css'
+import './style.scss'
 
 export default class PanelSettings extends React.PureComponent {
   static propTypes = propTypes

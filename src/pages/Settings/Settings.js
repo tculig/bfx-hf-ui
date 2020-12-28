@@ -6,7 +6,7 @@ import Input from '../../ui/Input'
 import Button from '../../ui/Button'
 
 import { propTypes, defaultProps } from './Settings.props'
-import './style.css'
+import './style.scss'
 
 export default class Settings extends React.Component {
   static propTypes = propTypes

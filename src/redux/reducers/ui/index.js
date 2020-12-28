@@ -3,6 +3,8 @@ import DEFAULT_TRADING_LAYOUT from './default_layout_trading'
 import DEFAULT_MARKET_DATA_LAYOUT from './default_layout_market_data'
 import DEFAULT_TRADING_COMPONENT_STATE from './default_component_state_trading'
 import DEFAULT_MARKET_DATA_COMPONENT_STATE from './default_component_state_market_data'
+import DEFAULT_T_MARKET_DATA_LAYOUT from '../../../TCode/redux/reducers/ui/default_layout_t_panel'
+import DEFAULT_T_MARKET_DATA_COMPONENT_STATE from '../../../TCode/redux/reducers/ui/default_component_state_t_market_data'
 
 const LAYOUTS_KEY = 'HF_UI_LAYOUTS'
 const LAYOUTS_STATE_KEY = 'HF_UI_LAYOUTS_STATE'
@@ -57,6 +59,7 @@ function getInitialState() {
     defaultState.layouts = {
       'Default Trading': DEFAULT_TRADING_LAYOUT,
       'Default Market Data': DEFAULT_MARKET_DATA_LAYOUT,
+      'Default T Market Data': DEFAULT_T_MARKET_DATA_LAYOUT,
     }
   }
 
@@ -64,6 +67,7 @@ function getInitialState() {
     defaultState.layoutComponentState = {
       'Default Trading': DEFAULT_TRADING_COMPONENT_STATE,
       'Default Market Data': DEFAULT_MARKET_DATA_COMPONENT_STATE,
+      'Default T Market Data': DEFAULT_T_MARKET_DATA_COMPONENT_STATE,
     }
   }
 

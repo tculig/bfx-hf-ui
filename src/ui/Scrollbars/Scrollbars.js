@@ -2,7 +2,7 @@ import React from 'react'
 import CustomScrollbars from 'react-custom-scrollbars'
 
 import { propTypes, defaultProps } from './Scrollbars.props'
-import './style.css'
+import './style.scss'
 
 export default class Scrollbars extends React.PureComponent {
   static propTypes = propTypes

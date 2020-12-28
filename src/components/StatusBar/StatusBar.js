@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 import NavbarButton from '../NavbarButton'
 import MANIFEST from '../../../package.json'
 import { propTypes, defaultProps } from './StatusBar.props'
-import './style.css'
+import './style.scss'
 
 export default class StatusBar extends React.Component {
   static propTypes = propTypes

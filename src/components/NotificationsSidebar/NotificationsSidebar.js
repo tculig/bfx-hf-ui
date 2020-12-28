@@ -6,7 +6,7 @@ import { nonce } from 'bfx-api-node-util'
 import Notification from './Notification'
 import Panel from '../../ui/Panel'
 import { propTypes, defaultProps } from './NotificationsSidebar.props'
-import './style.css'
+import './style.scss'
 
 const LIVE_NOTIFICATION_LIFETIME_MS = 4000
 

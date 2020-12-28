@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { propTypes, defaultProps } from './AlgoOrdersTable.props'
-import './style.css'
+import './style.scss'
 
 export default class AlgoOrdersTable extends React.PureComponent {
   static propTypes = propTypes

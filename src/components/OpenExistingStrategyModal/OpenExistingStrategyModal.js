@@ -7,7 +7,7 @@ import Button from '../../ui/Button'
 import Dropdown from '../../ui/Dropdown'
 
 import { propTypes, defaultProps } from './OpenExistingStrategyModal.props'
-import './style.css'
+import './style.scss'
 
 const debug = Debug('hfui:c:open-existing-strategy-modal')
 

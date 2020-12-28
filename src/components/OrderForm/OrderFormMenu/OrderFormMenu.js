@@ -1,6 +1,6 @@
 import React from 'react'
 import { propTypes, defaultProps } from './OrderFormMenu.props'
-import './style.css'
+import './style.scss'
 
 export default class OrderFormMenu extends React.PureComponent {
   static propTypes = propTypes

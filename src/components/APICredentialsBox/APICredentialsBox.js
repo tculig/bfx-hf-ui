@@ -5,7 +5,7 @@ import _capitalize from 'lodash/capitalize'
 
 import { propTypes, defaultProps } from './APICredentialsBox.props'
 import Button from '../../ui/Button'
-import './style.css'
+import './style.scss'
 
 export default class APICredentialsBox extends React.PureComponent {
   static propTypes = propTypes

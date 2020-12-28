@@ -3,7 +3,7 @@ import React from 'react'
 import Button from '../../ui/Button'
 import Dropdown from '../../ui/Dropdown'
 import { propTypes, defaultProps } from './LayoutControlToolbar.props'
-import './style.css'
+import './style.scss'
 
 export default class LayoutControlToolbar extends React.PureComponent {
   static propTypes = propTypes

@@ -8,7 +8,7 @@ import AtomicOrdersTable from '../AtomicOrdersTable'
 import AlgoOrdersTable from '../AlgoOrdersTable'
 import BalancesTable from '../BalancesTable'
 import { propTypes, defaultProps } from './TradingStatePanel.props'
-import './style.css'
+import './style.scss'
 
 const renderCounter = (num) => {
   if (num <= 0) {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { propTypes, defaultProps } from './RadioButton.props'
-import './style.css'
+import './style.scss'
 
 export default class RadioButton extends React.PureComponent {
   static propTypes = propTypes

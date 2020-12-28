@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 import Select from '../../ui/Select'
 
 import { propTypes, defaultProps } from './MarketSelect.props'
-import './style.css'
+import './style.scss'
 
 export default class MarketSelect extends React.PureComponent {
   static propTypes = propTypes

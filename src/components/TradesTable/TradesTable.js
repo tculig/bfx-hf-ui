@@ -5,7 +5,7 @@ import _isEqual from 'lodash/isEqual'
 import Table from '../../ui/Table'
 import TradesTableColumns from './TradesTable.columns'
 import { propTypes, defaultProps } from './TradesTable.props'
-import './style.css'
+import './style.scss'
 
 const DISPLAY_LIMIT = 50
 

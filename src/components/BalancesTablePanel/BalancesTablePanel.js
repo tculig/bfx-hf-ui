@@ -8,7 +8,7 @@ import Panel from '../../ui/Panel'
 import PanelSettings from '../../ui/PanelSettings'
 
 import { propTypes, defaultProps } from './BalancesTablePanel.props'
-import './style.css'
+import './style.scss'
 
 export default class BalancesTablePanel extends React.Component {
   static propTypes = propTypes

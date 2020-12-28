@@ -3,7 +3,7 @@ import AtomicOrdersTableColumns from './AtomicOrdersTable.columns'
 
 import { propTypes, defaultProps } from './AtomicOrdersTable.props'
 import Table from '../../ui/Table'
-import './style.css'
+import './style.scss'
 
 export default class AtomicOrdersTable extends React.PureComponent {
   static propTypes = propTypes

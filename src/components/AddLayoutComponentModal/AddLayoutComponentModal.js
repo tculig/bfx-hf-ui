@@ -9,7 +9,7 @@ import {
 } from '../GridLayout/GridLayout.helpers'
 
 import { propTypes, defaultProps } from './AddLayoutComponentModal.props'
-import './style.css'
+import './style.scss'
 
 export default class AddLayoutComponentModal extends React.Component {
   static propTypes = propTypes

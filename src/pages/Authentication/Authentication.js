@@ -7,7 +7,7 @@ import AuthenticationConnectingForm from './AuthenticationConnectingForm'
 import { propTypes, defaultProps } from './Authentication.props'
 import { version } from '../../../package.json'
 
-import './style.css'
+import './style.scss'
 
 export default class Authentication extends React.PureComponent {
   static propTypes = propTypes

@@ -3,7 +3,7 @@ import ClassNames from 'classnames'
 import RSelect from 'react-select'
 
 import { propTypes, defaultProps } from './Select.props'
-import './style.css'
+import './style.scss'
 
 export default class Select extends React.PureComponent {
   static propTypes = propTypes

@@ -5,7 +5,7 @@ import { Icon } from 'react-fa'
 import { propTypes, defaultProps } from './IndicatorSettingsModal.props'
 import Input from '../../../ui/Input'
 import Modal from '../../../ui/Modal'
-import './style.css'
+import './style.scss'
 
 export default class IndicatorSettingsModal extends React.Component {
   static propTypes = propTypes

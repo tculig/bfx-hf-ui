@@ -9,7 +9,7 @@ import BitfinexOrders from '../../orders/bitfinex'
 import { propTypes, defaultProps } from './Trading.props'
 import GridLayoutPage from '../../components/GridLayoutPage'
 
-import './style.css'
+import './style.scss'
 
 const LAYOUT_ID = '__hfui_trading_page'
 const orderDefinitions = {

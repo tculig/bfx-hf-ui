@@ -2,7 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import { propTypes, defaultProps } from './Button.props'
-import './style.css'
+import './style.scss'
 
 export default class Button extends React.PureComponent {
   static propTypes = propTypes

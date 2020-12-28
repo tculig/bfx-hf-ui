@@ -3,7 +3,7 @@ import PositionsTableColumns from './PositionsTable.columns'
 
 import Table from '../../ui/Table'
 import { propTypes, defaultProps } from './PositionsTable.props'
-import './style.css'
+import './style.scss'
 
 export default class PositionsTable extends React.PureComponent {
   static propTypes = propTypes

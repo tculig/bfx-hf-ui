@@ -1,7 +1,7 @@
 import React from 'react'
 import ClassNames from 'classnames'
 import { propTypes, defaultProps } from './Modal.props'
-import './style.css'
+import './style.scss'
 
 export default class Modal extends React.PureComponent {
   static propTypes = propTypes

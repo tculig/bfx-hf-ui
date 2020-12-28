@@ -10,7 +10,7 @@ import Backtester from '../../components/Backtester'
 import LiveStrategyExecutor from '../../components/LiveStrategyExecutor'
 import { propTypes, defaultProps } from './StrategyEditor.props'
 
-import './style.css'
+import './style.scss'
 
 const DocsPath = require('bfx-hf-strategy/docs/api.md')
 

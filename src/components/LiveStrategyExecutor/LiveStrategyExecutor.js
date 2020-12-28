@@ -5,7 +5,7 @@ import Dropdown from '../../ui/Dropdown'
 import TimeFrameDropdown from '../TimeFrameDropdown'
 import { propTypes, defaultProps } from './LiveStrategyExecutor.props'
 
-import './style.css'
+import './style.scss'
 
 // TODO: use global exchangeId or allow user to change
 const exId = 'bitfinex'

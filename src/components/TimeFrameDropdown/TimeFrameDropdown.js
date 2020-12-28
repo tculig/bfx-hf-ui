@@ -4,7 +4,7 @@ import Dropdown from '../../ui/Dropdown'
 import TimeFrames from '../../util/time_frames'
 import { propTypes, defaultProps } from './TimeFrameDropdown.props'
 
-import './style.css'
+import './style.scss'
 
 export default class TimeFrameDropdown extends React.PureComponent {
   static propTypes = propTypes

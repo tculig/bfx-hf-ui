@@ -6,7 +6,7 @@ import hljs from 'highlight.js'
 import sanitizeHtml from 'sanitize-html'
 
 import { propTypes, defaultProps } from './Markdown.props'
-import './style.css'
+import './style.scss'
 
 const md = new Remarkable({
   html: true, // Enable HTML tags in source

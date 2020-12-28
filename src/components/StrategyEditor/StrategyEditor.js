@@ -17,7 +17,7 @@ import StrategyEditorPanel from './StrategyEditorPanel'
 import CreateNewStrategyModal from '../CreateNewStrategyModal'
 import OpenExistingStrategyModal from '../OpenExistingStrategyModal'
 import { propTypes, defaultProps } from './StrategyEditor.props'
-import './style.css'
+import './style.scss'
 
 const debug = Debug('hfui-ui:c:strategy-editor')
 const STRATEGY_SECTIONS = [

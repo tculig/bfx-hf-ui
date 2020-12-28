@@ -4,7 +4,7 @@ import { Icon } from 'react-fa'
 import HFIcon from '../../ui/HFIcon'
 import NavbarButton from '../NavbarButton'
 import { propTypes, defaultProps } from './Navbar.props'
-import './style.css'
+import './style.scss'
 
 const items = [
   {
@@ -22,6 +22,10 @@ const items = [
   {
     route: '/settings',
     label: [<Icon name='cog' key='cog' />, <p key='label'>Settings</p>],
+  },
+  {
+    route: '/t-editor',
+    label: 'T-Editor',
   },
 ]
 

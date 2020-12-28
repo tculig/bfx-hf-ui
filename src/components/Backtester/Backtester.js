@@ -5,7 +5,7 @@ import { propTypes, defaultProps } from './Backtester.props'
 import RenderHistoricalReport from './reports/HistoricalReport'
 import RenderHistoricalForm from './forms/HistoricalForm'
 
-import './style.css'
+import './style.scss'
 
 export default class Backtester extends React.Component {
   static propTypes = propTypes

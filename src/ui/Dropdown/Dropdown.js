@@ -4,7 +4,7 @@ import Scrollbars from 'react-custom-scrollbars'
 import OnClickOutside from 'react-onclickoutside'
 
 import { propTypes, defaultProps } from './Dropdown.props'
-import './style.css'
+import './style.scss'
 
 class Dropdown extends React.Component {
   static propTypes = propTypes

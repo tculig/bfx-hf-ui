@@ -2,7 +2,7 @@ import React from 'react'
 import { Icon } from 'react-fa'
 
 import { propTypes, defaultProps } from './Input.props'
-import './style.css'
+import './style.scss'
 
 export default class Input extends React.PureComponent {
   static propTypes = propTypes

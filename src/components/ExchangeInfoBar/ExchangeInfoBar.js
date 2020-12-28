@@ -5,7 +5,7 @@ import ExchangeInfoBarItem from './ExchangeInfoBarItem'
 import quotePrefix from '../../util/quote_prefix'
 
 import { propTypes, defaultProps } from './ExchangeInfoBar.props'
-import './style.css'
+import './style.scss'
 
 export default class ExchangeInfoBar extends React.PureComponent {
   static propTypes = propTypes

@@ -2,7 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 
 import { propTypes, defaultProps } from './NavbarButton.props'
-import './style.css'
+import './style.scss'
 
 export default class NavbarButton extends React.PureComponent {
   static propTypes = propTypes
