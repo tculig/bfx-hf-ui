@@ -1,6 +1,6 @@
 import React from 'react'
 import Joyride, { STATUS } from 'react-joyride'
-import GridLayoutPageTiti from '../../components/GridLayoutPageTiti'
+import TGridLayoutPage from '../../components/TGridLayoutPage'
 import { propTypes } from './TMarketData.props'
 import './style.scss'
 
@@ -53,8 +53,8 @@ export default class TMarketData extends React.PureComponent {
            }}
          />
          )}
-        <GridLayoutPageTiti
-          defaultLayoutID='Default Titi Data'
+        <TGridLayoutPage
+          defaultLayoutID='Default T Market Data'
           tradesProps={commonComponentProps}
           bookProps={commonComponentProps}
           chartProps={commonComponentProps}

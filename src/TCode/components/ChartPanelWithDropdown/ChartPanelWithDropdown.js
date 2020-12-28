@@ -20,7 +20,7 @@ export default class ChartPanelWithDropdown extends React.Component {
       } = savedState
       const { allMarkets } = this.props
       const markets = allMarkets[props.activeExchange] || []
-      const activeMarketInit = markets[41];
+      const activeMarketInit = markets[41]
       this.state = {
         ...this.state,
         sumAmounts,
@@ -58,7 +58,7 @@ export default class ChartPanelWithDropdown extends React.Component {
       const {
         onRemove, moveable, removeable, dark,
       } = this.props
-      const { activeMarket } = this.state;
+      const { activeMarket } = this.state
       return (
         <TPanel
           dark={dark}

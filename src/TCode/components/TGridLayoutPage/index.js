@@ -1,3 +1,3 @@
-import GridLayoutPage from './GridLayoutPage.container'
+import TGridLayoutPage from './TGridLayoutPage.container'
 
-export default GridLayoutPage
+export default TGridLayoutPage

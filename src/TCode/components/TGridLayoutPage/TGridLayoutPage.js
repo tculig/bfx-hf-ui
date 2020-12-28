@@ -5,29 +5,29 @@ import _min from 'lodash/min'
 import _max from 'lodash/max'
 import { nonce } from 'bfx-api-node-util'
 
-import AddLayoutComponentModal from '../AddLayoutComponentModal'
-import CreateNewLayoutModal from '../CreateNewLayoutModal'
-import LayoutControlToolbar from '../LayoutControlToolbar'
-import GridLayoutTiti from '../GridLayoutTiti'
-import StatusBar from '../StatusBar'
+import TAddLayoutComponentModal from '../TAddLayoutComponentModal'
+import CreateNewLayoutModal from '../../../components/CreateNewLayoutModal'
+import LayoutControlToolbar from '../../../components/LayoutControlToolbar'
+import TGridLayout from '../TGridLayout'
+import StatusBar from '../../../components/StatusBar'
 
 import {
   layoutDefToGridLayout,
   gridLayoutToLayoutDef,
-} from './GridLayoutPage.helpers'
+} from './TGridLayoutPage.helpers'
 
 import {
   COMPONENT_DIMENSIONS,
-} from '../GridLayoutTiti/GridLayout.helpers'
+} from '../TGridLayout/TGridLayout.helpers'
 
-import BitfinexOrders from '../../orders/bitfinex'
-import { propTypes, defaultProps } from './GridLayoutPage.props'
+import BitfinexOrders from '../../../orders/bitfinex'
+import { propTypes, defaultProps } from './TGridLayoutPage.props'
 
 const orderDefinitions = {
   bitfinex: Object.values(BitfinexOrders).map(uiDef => uiDef()),
 }
 
-export default class GridLayoutPageTiti extends React.Component {
+export default class TGridLayoutPage extends React.Component {
   static propTypes = propTypes
   static defaultProps = defaultProps
   that = this
@@ -212,13 +212,13 @@ export default class GridLayoutPageTiti extends React.Component {
         )}
 
         {addComponentModalOpen && (
-          <AddLayoutComponentModal
+          <TAddLayoutComponentModal
             onClose={this.onToggleAddComponentModal}
             onSubmit={this.onAddComponentToLayout}
           />
         )}
 
-        <GridLayoutTiti
+        <TGridLayout
           xExtentsCommonProps={xExtentsCommon}
           darkPanels={darkPanels}
           layoutDef={layoutDef}

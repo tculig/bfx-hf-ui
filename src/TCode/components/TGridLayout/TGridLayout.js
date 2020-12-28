@@ -47,7 +47,7 @@ export default class TGridLayout extends React.PureComponent {
         cols={{
           lg: 100, md: 100, sm: 100, xs: 100, xxs: 100,
         }}
-        rowHeight={GridLayout.rowHeight}
+        rowHeight={TGridLayout.rowHeight}
         layouts={{ lg: layoutDef.layout }}
         breakpoints={{
           lg: 1000, md: 996, sm: 768, xs: 480, xxs: 0,

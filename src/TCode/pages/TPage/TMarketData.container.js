@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
 import {
   getLayouts, getActiveMarket, getActiveExchange,
-} from '../../redux/selectors/ui'
-import { MARKET_PAGE } from '../../redux/constants/ui'
-import UIActions from '../../redux/actions/ui'
+} from '../../../redux/selectors/ui'
+import { MARKET_PAGE } from '../../../redux/constants/ui'
+import UIActions from '../../../redux/actions/ui'
 
 import TMarketData from './TMarketData'
 

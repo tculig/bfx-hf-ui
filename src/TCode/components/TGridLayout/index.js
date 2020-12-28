@@ -1,3 +1,3 @@
-import GridLayout from './GridLayout'
+import TGridLayout from './TGridLayout'
 
-export default GridLayout
+export default TGridLayout

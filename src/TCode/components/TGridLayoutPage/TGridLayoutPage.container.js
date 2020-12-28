@@ -1,9 +1,9 @@
 import { connect } from 'react-redux'
 
-import UIActions from '../../redux/actions/ui'
+import UIActions from '../../../redux/actions/ui'
 import {
   getLayouts, getActiveMarket, getActiveExchange,
-} from '../../redux/selectors/ui'
+} from '../../../redux/selectors/ui'
 
 import TGridLayoutPage from './TGridLayoutPage'
 
