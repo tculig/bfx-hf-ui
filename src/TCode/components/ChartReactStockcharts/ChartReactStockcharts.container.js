@@ -11,7 +11,7 @@ import {
   getAllCandles, getAllPositions, getAllOrders, getAllSyncRanges,
 } from '../../../redux/selectors/ws'
 
-import Chart from './Chart'
+import ChartReactStockcharts from './ChartReactStockcharts'
 
 const mapStateToProps = (state = {}, ownProps = {}) => {
   const { layoutID, layoutI: id } = ownProps
@@ -20,7 +20,6 @@ const mapStateToProps = (state = {}, ownProps = {}) => {
   const { chart } = settings
   const activeExchange = ownProps.activeExchange || getActiveExchange(state)
   const activeTickerTitiProp = ownProps.activeMarket
-
   return {
     activeExchange,
     chart,
@@ -72,4 +71,4 @@ const mapDispatchToProps = dispatch => ({
   },
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(Chart)
+export default connect(mapStateToProps, mapDispatchToProps)(ChartReactStockcharts)

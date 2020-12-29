@@ -11,11 +11,14 @@ import PositionsTablePanel from '../../../components/PositionsTablePanel'
 import BalancesTablePanel from '../../../components/BalancesTablePanel'
 import TradingStatePanel from '../../../components/TradingStatePanel'
 
+import TGridLayout from './TGridLayout'
 import ChartPanelWithDropdown from '../ChartPanelWithDropdown'
+import ChartPanelReactStockcharts from '../ChartPanelReactStockcharts'
 
 const COMPONENT_TYPES = {
   CHART: 'CHART',
   CHARTWITHDROPDOWN: 'CHARTWITHDROPDOWN',
+  CHARTREACTSTOCKCHARTS: 'CHARTREACTSTOCKCHARTS',
   ORDER_BOOK: 'ORDER_BOOK',
   ORDER_FORM: 'ORDER_FORM',
   TRADES_TABLE: 'TRADES_TABLE',
@@ -30,6 +33,7 @@ const COMPONENT_TYPES = {
 const COMPONENT_LABELS = {
   [COMPONENT_TYPES.CHART]: 'Chart',
   [COMPONENT_TYPES.CHARTWITHDROPDOWN]: 'Chart With Dropdown',
+  [COMPONENT_TYPES.CHARTREACTSTOCKCHARTS]: 'Chart React Stockcharts',
   [COMPONENT_TYPES.ORDER_BOOK]: 'Order Book',
   [COMPONENT_TYPES.ORDER_FORM]: 'Order Form',
   [COMPONENT_TYPES.TRADES_TABLE]: 'Trades Table',
@@ -44,6 +48,7 @@ const COMPONENT_LABELS = {
 const COMPONENT_DIMENSIONS = {
   [COMPONENT_TYPES.CHART]: { w: 33, h: 10 },
   [COMPONENT_TYPES.CHARTWITHDROPDOWN]: { w: 33, h: 10 },
+  [COMPONENT_TYPES.CHARTREACTSTOCKCHARTS]: { w: 33, h: 10 },
   [COMPONENT_TYPES.ORDER_BOOK]: { w: 24, h: 20 },
   [COMPONENT_TYPES.ORDER_FORM]: { w: 24, h: 10 },
   [COMPONENT_TYPES.TRADES_TABLE]: { w: 24, h: 10 },
@@ -62,6 +67,9 @@ const componentForType = (c) => {
 
     case COMPONENT_TYPES.CHARTWITHDROPDOWN:
       return ChartPanelWithDropdown
+
+    case COMPONENT_TYPES.CHARTREACTSTOCKCHARTS:
+      return ChartPanelReactStockcharts
 
     case COMPONENT_TYPES.ORDER_BOOK:
       return OrderBookPanel
@@ -96,12 +104,17 @@ const componentForType = (c) => {
 }
 
 const renderLayoutElement = (layoutID, def = {}, componentProps = {}, onRemoveComponent) => {
-  const { i, c, props = {} } = def
+  const {
+    i, c, h, props = {},
+  } = def
+  const gridHeight = (TGridLayout.rowHeight + 7) * h - 50 // idk??? TITI CHANGE
   const C = componentForType(c)
   const cProps = {
     ...props,
     ...componentProps.sharedProps,
+    xExtentsCommon: componentProps.xExtentsCommon,
     layoutID,
+    height: gridHeight,
     layoutI: i,
     onRemove: () => onRemoveComponent(i),
   }
@@ -126,6 +139,8 @@ const renderLayoutElement = (layoutID, def = {}, componentProps = {}, onRemoveCo
   } else if (C === AtomicOrdersTablePanel && componentProps.orders) {
     Object.assign(cProps, componentProps.orders)
   } else if (C === ChartPanelWithDropdown && componentProps.chart) {
+    Object.assign(cProps, componentProps.chart)
+  } else if (C === ChartPanelReactStockcharts && componentProps.chart) {
     Object.assign(cProps, componentProps.chart)
   }
   return <C {...cProps} />

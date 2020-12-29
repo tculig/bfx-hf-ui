@@ -2,7 +2,7 @@ import React from 'react'
 import ClassNames from 'classnames'
 import Select from '../../../ui/Select'
 
-import { propTypes, defaultProps } from './MarketSelect.props'
+import { propTypes, defaultProps } from './TMarketSelect.props'
 import './style.scss'
 
 export default class TMarketSelect extends React.PureComponent {

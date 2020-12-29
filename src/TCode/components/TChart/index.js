@@ -1,3 +1,3 @@
-import TChart from './Chart.container'
+import TChart from './TChart.container'
 
 export default TChart

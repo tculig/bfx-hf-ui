@@ -15,7 +15,7 @@ import TMarketSelect from '../TMarketSelect'
 import { getLastCandleUpdate } from '../../../redux/selectors/ws'
 import { getMarketsForExchange } from '../../../redux/selectors/meta'
 import nearestMarket from '../../../util/nearest_market'
-import { propTypes, defaultProps } from './Chart.props'
+import { propTypes, defaultProps } from './TChart.props'
 import './style.scss'
 
 const HEIGHT_STEP_PX = 20
