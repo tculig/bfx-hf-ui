@@ -7,6 +7,7 @@ import StrategyEditorPage from '../../pages/StrategyEditor'
 import MarketDataPage from '../../pages/MarketData'
 import AuthenticationPage from '../../pages/Authentication'
 import TPage from '../../TCode/pages/TPage'
+import AnalysisPage from '../../TCode/pages/AnalysisPage'
 
 import Navbar from '../Navbar'
 import NotificationsSidebar from '../NotificationsSidebar'
@@ -81,6 +82,12 @@ export default class HFUI extends React.PureComponent {
             path='/t-editor'
             render={() => (
               <TPage />
+            )}
+          />
+          <Route
+            path='/analysis'
+            render={() => (
+              <AnalysisPage />
             )}
           />
         </Switch>

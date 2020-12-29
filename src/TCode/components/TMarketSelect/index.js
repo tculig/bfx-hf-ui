@@ -11,7 +11,7 @@ export default class TMarketSelect extends React.PureComponent {
 
   render() {
     const {
-      value, onChange, markets, className, renderLabel, ...otherProps
+      selectkey, value, onChange, markets, className, renderLabel, ...otherProps
     } = this.props
 
     return (
@@ -19,7 +19,7 @@ export default class TMarketSelect extends React.PureComponent {
         label={renderLabel && 'Market'}
         className={ClassNames('hfui-marketselect', className)}
         onChange={(selection) => {
-          onChange(markets.find(m => m.uiID === selection.value))
+          onChange(markets.find(m => m.uiID === selection.value), selectkey)
         }}
         value={{
           label: value.uiID || `${value.base}/${value.quote}`,

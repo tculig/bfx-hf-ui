@@ -27,6 +27,10 @@ const items = [
     route: '/t-editor',
     label: 'T-Editor',
   },
+  {
+    route: '/analysis',
+    label: 'Analysis',
+  },
 ]
 
 export default class Navbar extends React.PureComponent {

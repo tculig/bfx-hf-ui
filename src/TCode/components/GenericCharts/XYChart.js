@@ -1,14 +1,12 @@
-import PropTypes from 'prop-types';
-import React, { useState, useEffect } from 'react';
-import { ChartCanvas, Chart } from 'react-stockcharts/'
 import { scaleTime } from 'd3-scale';
-import { CandlestickSeries, BarSeries } from 'react-stockcharts/lib/series';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
+import { Chart, ChartCanvas } from 'react-stockcharts/';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
-import { timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
 import { fitWidth } from 'react-stockcharts/lib/helper';
-import { format } from 'd3-format';
-import { MouseCoordinateY } from 'react-stockcharts/lib/coordinates';
-import { v4 as uuidv4 } from 'uuid'
+import { LineSeries } from 'react-stockcharts/lib/series';
+import { v4 as uuidv4 } from 'uuid';
+import GenericChartPanel from '../GenericChartPanel/GenericChartPanel'
 /* eslint react/prop-types: 0 */
 
 const ChartJS = React.forwardRef((props, ref) => {
@@ -17,10 +15,9 @@ const ChartJS = React.forwardRef((props, ref) => {
     showHistorical: false,
     idRoot: uuidv4(),
     id1: uuidv4(),
-    id2: uuidv4(),
   });
   function fetchHistoricalData() {
-    fetch(`http://localhost:3001/getCandles?ticker=${props.activeMarket.restID}`).then(response => { return response.json() })
+    fetch(`http://localhost:3001/getCandles?ticker=${props.activeMarket[GenericChartPanel.marketIDS[0]].restID}`).then(response => { return response.json() })
       .then(data => {
         const processedData = []
         for (let i = 0; i < 1000; i++) {
@@ -46,7 +43,7 @@ const ChartJS = React.forwardRef((props, ref) => {
     fetchHistoricalData()
   }, [props.activeMarket])
   const {
-    showHistorical, id1, id2, idRoot,
+    showHistorical, id1, idRoot,
   } = state;
   const { type, width, ratio } = props
   const xAccessor = (d) => { return d.date }
@@ -87,42 +84,11 @@ const ChartJS = React.forwardRef((props, ref) => {
         ref={ref}
         onZoomTiti={onZoomTiti}
       >
-        <Chart
-          id={id1}
-          yExtents={[d => d.volume]}
-          height={0.3 * height}
-          origin={(w, h) => [0, h - 0.3 * height]}
-        >
-          <YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} stroke='#B2B5BE' tickStroke='#B2B5BE' />
-          <MouseCoordinateY
-            at='left'
-            orient='left'
-            displayFormat={format('.4s')}
-          />
-          <BarSeries
-            yAccessor={d => d.volume}
-            widthRatio={0.95}
-            opacity={0.5}
-            fill={d => (d.close > d.open ? 'grey' : 'blue')}
-            width={timeIntervalBarWidth({
-              offset: (date) => {
-                return new Date(date.getTime() + 30 * 60 * 1000);
-              },
-            })}
-          />
-        </Chart>
-        <Chart id={id2} yExtents={(d) => [d.high, d.low]}>
+        <Chart id={id1} yExtents={(d) => [d.high, d.low]}>
           <XAxis axisAt='bottom' orient='bottom' ticks={16} stroke='#B2B5BE' tickStroke='#B2B5BE' />
           <YAxis axisAt='right' orient='right' ticks={15} stroke='#B2B5BE' tickStroke='#B2B5BE' />
-          <CandlestickSeries
-            opacity={1}
-            fill={d => (d.close > d.open ? '#2FA69A' : '#ED5053')}
-            wickStroke={d => (d.close > d.open ? '#2FA69A' : '#ED5053')}
-            width={timeIntervalBarWidth({
-              offset: (date) => {
-                return new Date(date.getTime() + 30 * 60 * 1000);
-              },
-            })}
+          <LineSeries
+            yAccessor={d => d.close}
           />
         </Chart>
       </ChartCanvas>

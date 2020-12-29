@@ -12,7 +12,7 @@ export default class AuthenticationInit extends React.Component {
   static defaultProps = defaultProps
 
   state = {
-    password: '',
+    password: 'JwQcSR2VMN86fa73mAODu7TVtFkliPMsHmrLxxkLEwE',
   }
 
   constructor(props) {
@@ -22,6 +22,10 @@ export default class AuthenticationInit extends React.Component {
     this.onUnlock = this.onUnlock.bind(this)
     this.onReset = this.onReset.bind(this)
     this.onEnterPress = this.onEnterPress.bind(this)
+  }
+
+  componentDidMount() {
+    this.onUnlock();
   }
 
   onPasswordChange(password) {

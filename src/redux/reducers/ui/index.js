@@ -60,6 +60,7 @@ function getInitialState() {
       'Default Trading': DEFAULT_TRADING_LAYOUT,
       'Default Market Data': DEFAULT_MARKET_DATA_LAYOUT,
       'Default T Market Data': DEFAULT_T_MARKET_DATA_LAYOUT,
+      Analysis: DEFAULT_T_MARKET_DATA_LAYOUT,
     }
   }
 
@@ -68,6 +69,7 @@ function getInitialState() {
       'Default Trading': DEFAULT_TRADING_COMPONENT_STATE,
       'Default Market Data': DEFAULT_MARKET_DATA_COMPONENT_STATE,
       'Default T Market Data': DEFAULT_T_MARKET_DATA_COMPONENT_STATE,
+      Analysis: DEFAULT_T_MARKET_DATA_COMPONENT_STATE,
     }
   }
 

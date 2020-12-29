@@ -14,11 +14,13 @@ import TradingStatePanel from '../../../components/TradingStatePanel'
 import TGridLayout from './TGridLayout'
 import ChartPanelWithDropdown from '../ChartPanelWithDropdown'
 import ChartPanelReactStockcharts from '../ChartPanelReactStockcharts'
+import GenericChartPanel from '../GenericChartPanel'
 
 const COMPONENT_TYPES = {
   CHART: 'CHART',
   CHARTWITHDROPDOWN: 'CHARTWITHDROPDOWN',
   CHARTREACTSTOCKCHARTS: 'CHARTREACTSTOCKCHARTS',
+  GENERICCHART: 'GENERICCHART',
   ORDER_BOOK: 'ORDER_BOOK',
   ORDER_FORM: 'ORDER_FORM',
   TRADES_TABLE: 'TRADES_TABLE',
@@ -34,6 +36,7 @@ const COMPONENT_LABELS = {
   [COMPONENT_TYPES.CHART]: 'Chart',
   [COMPONENT_TYPES.CHARTWITHDROPDOWN]: 'Chart With Dropdown',
   [COMPONENT_TYPES.CHARTREACTSTOCKCHARTS]: 'Chart React Stockcharts',
+  [COMPONENT_TYPES.GENERICCHART]: 'Generic Chart',
   [COMPONENT_TYPES.ORDER_BOOK]: 'Order Book',
   [COMPONENT_TYPES.ORDER_FORM]: 'Order Form',
   [COMPONENT_TYPES.TRADES_TABLE]: 'Trades Table',
@@ -49,6 +52,7 @@ const COMPONENT_DIMENSIONS = {
   [COMPONENT_TYPES.CHART]: { w: 33, h: 10 },
   [COMPONENT_TYPES.CHARTWITHDROPDOWN]: { w: 33, h: 10 },
   [COMPONENT_TYPES.CHARTREACTSTOCKCHARTS]: { w: 33, h: 10 },
+  [COMPONENT_TYPES.GENERICCHART]: { w: 33, h: 10 },
   [COMPONENT_TYPES.ORDER_BOOK]: { w: 24, h: 20 },
   [COMPONENT_TYPES.ORDER_FORM]: { w: 24, h: 10 },
   [COMPONENT_TYPES.TRADES_TABLE]: { w: 24, h: 10 },
@@ -70,6 +74,9 @@ const componentForType = (c) => {
 
     case COMPONENT_TYPES.CHARTREACTSTOCKCHARTS:
       return ChartPanelReactStockcharts
+
+    case COMPONENT_TYPES.GENERICCHART:
+      return GenericChartPanel
 
     case COMPONENT_TYPES.ORDER_BOOK:
       return OrderBookPanel
@@ -141,6 +148,8 @@ const renderLayoutElement = (layoutID, def = {}, componentProps = {}, onRemoveCo
   } else if (C === ChartPanelWithDropdown && componentProps.chart) {
     Object.assign(cProps, componentProps.chart)
   } else if (C === ChartPanelReactStockcharts && componentProps.chart) {
+    Object.assign(cProps, componentProps.chart)
+  } else if (C === GenericChartPanel && componentProps.chart) {
     Object.assign(cProps, componentProps.chart)
   }
   return <C {...cProps} />
