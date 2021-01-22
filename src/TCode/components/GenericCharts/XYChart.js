@@ -79,6 +79,7 @@ const ChartJS = React.forwardRef((props, ref) => {
         data={state.historicalData}
         seriesName='MSFT'
         xAccessor={xAccessor}
+        displayXAccessor={xAccessor}
         xScale={scaleTime()}
         xExtents={xExtents}
         ref={ref}
