@@ -1,27 +1,36 @@
-import { scaleLinear } from 'd3-scale';
+/* eslint-disable */
+import { scaleLinear, scaleTime } from 'd3-scale';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { format } from 'd3-format';
 import { Chart, ChartCanvas } from 'react-stockcharts/';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
 import { fitWidth } from 'react-stockcharts/lib/helper';
-import { LineSeries } from 'react-stockcharts/lib/series';
+import { timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
+import { LineSeries, CandlestickSeries, BarSeries } from 'react-stockcharts/lib/series';
+import { MouseCoordinateY } from 'react-stockcharts/lib/coordinates';
 import { v4 as uuidv4 } from 'uuid';
 import GenericChartPanel from './GenericChartPanel'
 /* eslint react/prop-types: 0 */
 
 const PearsonChart = React.forwardRef((props, ref) => {
   const [state, setState] = useState({
-    historicalData: [],
+    historicalData1: [],
+    historicalData2: [],
+    paersonData: [],
     showHistorical: false,
     idRoot: uuidv4(),
     id1: uuidv4(),
+    id2: uuidv4(),
+    id3: uuidv4(),
+    id4: uuidv4(),
   });
 
   async function fetchHistoricalData(ticker) {
     const result = fetch(`http://localhost:3001/getCandles?ticker=${ticker}`).then(response => { return response.json() })
       .then(data => {
         const processedData = []
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < 2000; i++) {
           const dataPoint = data[i];
           processedData.push({
             date: new Date(dataPoint[0]),
@@ -56,15 +65,14 @@ const PearsonChart = React.forwardRef((props, ref) => {
     return (mulSum - (sum1 * sum2) / n) / dense;
   }
 
-  function processPaerson(data1, data2) {
+  function processPaerson(dataset1, dataset2, offsetMax, offsetWindow) {
     const paersonData = [];
-    const offsetMax = 50;
     for (let offset = -offsetMax; offset <= offsetMax; offset++) {
       const d1 = [];
       const d2 = [];
-      for (let i = offsetMax; i < data1.length - offsetMax; i++) {
-        d1.push(data1[i].close);
-        d2.push(data2[i + offset].close);
+      for (let i = offsetMax + offsetWindow[0]; i < offsetMax + offsetWindow[0] + offsetWindow[1]; i++) {
+        d1.push(dataset1[i].close);
+        d2.push(dataset2[i + offset].close);
       }
       const per = corr(d1, d2);
       paersonData.push({
@@ -74,35 +82,51 @@ const PearsonChart = React.forwardRef((props, ref) => {
     }
     return paersonData;
   }
-
+  const data1 = useRef();
+  const data2 = useRef();
+  const offsetRef = useRef([0, 250]);
+  const intervalRef = useRef();
   useEffect(() => {
     async function runAsync() {
-      const data1 = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[0]].restID)
-      const data2 = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[1]].restID)
-      const paersonResults = processPaerson(data1, data2);
-      setState(() => ({
-        ...state,
-        historicalData: paersonResults,
-        showHistorical: true,
-      }))
+      data1.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[0]].restID)
+      data2.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[1]].restID)
+      intervalRef.current = setInterval(() => {
+        const paersonResults = processPaerson(data1.current, data2.current, 500, offsetRef.current)
+        offsetRef.current[0]++
+        console.log(`${offsetRef.current[0]} ${data1.current[offsetRef.current[0]].date} ${data1.current[offsetRef.current[0] + offsetRef.current[1]].date}`)
+        if (offsetRef.current[0] > 0) {
+          clearInterval(intervalRef.current)
+        }
+        setState(() => ({
+          ...state,
+          historicalData1: data1.current,
+          historicalData2: data2.current,
+          paersonData: paersonResults,
+          showHistorical: true,
+        }))
+      }, 100);
     }
     runAsync();
   }, [props.activeMarket])
-  const {
-    showHistorical, id1, idRoot,
-  } = state;
+
+  const { showHistorical, id1, idRoot, id2, id3, id4 } = state;
   const { type, width, ratio } = props
 
-  const xAccessor = (d) => { return d?.offset }
-  const dummy = { offset: 0 }
-  const start = xAccessor(state.historicalData[0] || dummy)
-  const end = xAccessor(state.historicalData[state.historicalData.length - 1] || dummy)
+  const xAccessorPaerson = (d) => { return d?.offset }
+  const dummyPaerson = { offset: 0 }
+  const startPaerson = xAccessorPaerson(state.paersonData[0] || dummyPaerson)
+  const endPaerson = xAccessorPaerson(state.paersonData[state.paersonData.length - 1] || dummyPaerson)
+  let xExtentsPaerson = [startPaerson, endPaerson]
 
-  let xExtents = [start, end]
+  const xAccessor = (d) => { return d.date }
+  const dummy = { date: new Date() }
+  const start1 = xAccessor(state.historicalData1[0] || dummy)
+  const end1 = xAccessor(state.historicalData1[state.historicalData1.length - 1] || dummy)
+
+  let xExtents1 = [start1, end1]
+  let xExtents2 = [start1, end1]
   if (props.xExtentsCommon != null) {
-    if (props.xExtentsCommon.id !== idRoot) {
-      xExtents = props.xExtentsCommon.extents
-    }
+      xExtents2 = props.xExtentsCommon.extents
   }
   function onZoomTiti(zoomDir) {
     props.updateXExtends({
@@ -115,32 +139,163 @@ const PearsonChart = React.forwardRef((props, ref) => {
     <div className='ChartJS'>
       {showHistorical
       && (
-      <ChartCanvas
-        id={idRoot}
-        height={height}
-        ratio={ratio}
-        width={width}
-        margin={{
-          left: 50, right: 50, top: 10, bottom: 30,
-        }}
-        type={type}
-        data={state.historicalData}
-        seriesName='MSFT'
-        xAccessor={xAccessor}
-        displayXAccessor={xAccessor}
-        xScale={scaleLinear()}
-        xExtents={xExtents}
-        ref={ref}
-        onZoomTiti={onZoomTiti}
-      >
-        <Chart id={id1} yExtents={(d) => [d.paerson]}>
+      <>  
+      <div>
+        <ChartCanvas
+          id={idRoot}
+          height={height / 3}
+          ratio={ratio}
+          width={width}
+          margin={{
+            left: 50, right: 50, top: 10, bottom: 30,
+          }}
+          type={type}
+          data={state.paersonData}
+          seriesName='MSFT'
+          xAccessor={xAccessorPaerson}
+          displayXAccessor={xAccessorPaerson}
+          xScale={scaleLinear()}
+          xExtents={xExtentsPaerson}
+          ref={ref}
+        >
+          <Chart id={id1} yExtents={(d) => [d.paerson]}>
+            <XAxis axisAt='bottom' orient='bottom' ticks={16} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+            <YAxis axisAt='right' orient='right' ticks={15} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+            <LineSeries
+              yAccessor={d => d.paerson}
+            />
+          </Chart>
+        </ChartCanvas>
+      </div>
+      <div id="bitcoinCandle">
+        <ChartCanvas
+          id={idRoot}
+          height={height/3}
+          ratio={ratio}
+          width={width}
+          margin={{
+            left: 50, right: 50, top: 10, bottom: 30,
+          }}
+          type={type}
+          data={state.historicalData1}
+          seriesName='MSFT'
+          xAccessor={xAccessor}
+          displayXAccessor={xAccessor}
+          xScale={scaleTime()}
+          xExtents={xExtents1}
+          ref={ref}
+          onZoomTiti={onZoomTiti}
+        >
+        <Chart
+          id={id1}
+          yExtents={[d => d.volume]}
+          height={0.5*height/3}
+          origin={(w, h) => [0, h - 0.5*height/3]}
+        >
+          <YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+          <MouseCoordinateY
+            at='left'
+            orient='left'
+            displayFormat={format('.4s')}
+          />
+          <BarSeries
+            yAccessor={d => d.volume}
+            widthRatio={0.95}
+            opacity={0.5}
+            fill={d => (d.close > d.open ? 'grey' : 'blue')}
+            width={timeIntervalBarWidth({
+              offset: (date) => {
+                return new Date(date.getTime() + 30 * 60 * 1000);
+              },
+            })}
+          />
+        </Chart>
+        <Chart 
+          id={id2} 
+          yExtents={(d) => [d.high, d.low]}
+          height={0.5*height/3}
+          origin={(w, h) => [0, h - 0.5*height/3]}
+        >
           <XAxis axisAt='bottom' orient='bottom' ticks={16} stroke='#B2B5BE' tickStroke='#B2B5BE' />
           <YAxis axisAt='right' orient='right' ticks={15} stroke='#B2B5BE' tickStroke='#B2B5BE' />
-          <LineSeries
-            yAccessor={d => d.paerson}
+          <CandlestickSeries
+            opacity={1}
+            fill={d => (d.close > d.open ? '#2FA69A' : '#ED5053')}
+            wickStroke={d => (d.close > d.open ? '#2FA69A' : '#ED5053')}
+            width={timeIntervalBarWidth({
+              offset: (date) => {
+                return new Date(date.getTime() + 30 * 60 * 1000);
+              },
+            })}
           />
         </Chart>
       </ChartCanvas>
+      </div>
+      <div id="ethCandle">
+        <ChartCanvas
+          id={idRoot}
+          height={height/3}
+          ratio={ratio}
+          width={width}
+          margin={{
+            left: 50, right: 50, top: 10, bottom: 30,
+          }}
+          type={type}
+          data={state.historicalData2}
+          seriesName='MSFT'
+          xAccessor={xAccessor}
+          displayXAccessor={xAccessor}
+          xScale={scaleTime()}
+          xExtents={xExtents2}
+          ref={ref}
+          onZoomTiti={onZoomTiti}
+        >
+        <Chart
+          id={id3}
+          yExtents={[d => d.volume]}
+          height={0.5*height/3}
+          origin={(w, h) => [0, h - 0.5*height/3]}
+        >
+          <YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+          <MouseCoordinateY
+            at='left'
+            orient='left'
+            displayFormat={format('.4s')}
+          />
+          <BarSeries
+            yAccessor={d => d.volume}
+            widthRatio={0.95}
+            opacity={0.5}
+            fill={d => (d.close > d.open ? 'grey' : 'blue')}
+            width={timeIntervalBarWidth({
+              offset: (date) => {
+                return new Date(date.getTime() + 30 * 60 * 1000);
+              },
+            })}
+          />
+        </Chart>
+        <Chart 
+          id={id4} 
+          yExtents={(d) => [d.high, d.low]}
+          height={0.5*height/3}
+          origin={(w, h) => [0, h - 0.5*height/3]}
+        >
+          <XAxis axisAt='bottom' orient='bottom' ticks={16} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+          <YAxis axisAt='right' orient='right' ticks={15} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+          <CandlestickSeries
+            opacity={1}
+            fill={d => (d.close > d.open ? '#2FA69A' : '#ED5053')}
+            wickStroke={d => (d.close > d.open ? '#2FA69A' : '#ED5053')}
+            width={timeIntervalBarWidth({
+              offset: (date) => {
+                return new Date(date.getTime() + 30 * 60 * 1000);
+              },
+            })}
+          />
+        </Chart>
+      </ChartCanvas>
+      </div>
+      </>
       )}
     </div>
   );
