@@ -7,8 +7,9 @@ import { Chart, ChartCanvas } from 'react-stockcharts/';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
 import { fitWidth } from 'react-stockcharts/lib/helper';
 import { timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
-import { LineSeries, CandlestickSeries, BarSeries } from 'react-stockcharts/lib/series';
-import { MouseCoordinateY } from 'react-stockcharts/lib/coordinates';
+import { LineSeries, CandlestickSeries } from 'react-stockcharts/lib/series';
+import { ClickCallback } from "react-stockcharts/lib/interactive";
+import { MouseCoordinateY, MouseCoordinateX, CrossHairCursor, CurrentCoordinate } from 'react-stockcharts/lib/coordinates';
 import { v4 as uuidv4 } from 'uuid';
 import GenericChartPanel from './GenericChartPanel'
 /* eslint react/prop-types: 0 */
@@ -30,7 +31,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
     const result = fetch(`http://localhost:3001/getCandles?ticker=${ticker}`).then(response => { return response.json() })
       .then(data => {
         const processedData = []
-        for (let i = 0; i < 2000; i++) {
+        for (let i = 0; i < 1000; i++) {
           const dataPoint = data[i];
           processedData.push({
             date: new Date(dataPoint[0]),
@@ -84,30 +85,41 @@ const PearsonChart = React.forwardRef((props, ref) => {
   }
   const data1 = useRef();
   const data2 = useRef();
-  const offsetRef = useRef([0, 250]);
+  const offsetRef = useRef([0, 500]);
   const intervalRef = useRef();
+  const [dependentGraphOffset, setDependentGraphOffset] = useState(0);
+
+  async function runAsync() {
+    data1.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[0]].restID)
+    data2.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[1]].restID)
+    intervalRef.current = setInterval(() => {
+      const paersonResults = processPaerson(data1.current, data2.current, 100, offsetRef.current)
+      offsetRef.current[0]++
+      console.log(`${offsetRef.current[0]} ${data1.current[offsetRef.current[0]].date} ${data1.current[offsetRef.current[0] + offsetRef.current[1]].date}`)
+      if (offsetRef.current[0] > 0) {
+        clearInterval(intervalRef.current)
+      }
+      setState(() => ({
+        ...state,
+        historicalData1: data1.current,
+        historicalData2: data2.current,
+        paersonData: paersonResults,
+        showHistorical: true,
+      }))
+    }, 100);
+  }
   useEffect(() => {
-    async function runAsync() {
-      data1.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[0]].restID)
-      data2.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[1]].restID)
-      intervalRef.current = setInterval(() => {
-        const paersonResults = processPaerson(data1.current, data2.current, 500, offsetRef.current)
-        offsetRef.current[0]++
-        console.log(`${offsetRef.current[0]} ${data1.current[offsetRef.current[0]].date} ${data1.current[offsetRef.current[0] + offsetRef.current[1]].date}`)
-        if (offsetRef.current[0] > 0) {
-          clearInterval(intervalRef.current)
-        }
-        setState(() => ({
-          ...state,
-          historicalData1: data1.current,
-          historicalData2: data2.current,
-          paersonData: paersonResults,
-          showHistorical: true,
-        }))
-      }, 100);
-    }
     runAsync();
   }, [props.activeMarket])
+
+  function recalculatePearson() {
+    const xExtentsCurrent = props.xExtentsCommon.extents;
+    console.log(xExtentsCurrent)
+  }
+
+  function shiftDependendGraph(props) {
+    setDependentGraphOffset(props.currentItem.offset);
+  }
 
   const { showHistorical, id1, idRoot, id2, id3, id4 } = state;
   const { type, width, ratio } = props
@@ -128,6 +140,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
   if (props.xExtentsCommon != null) {
       xExtents2 = props.xExtentsCommon.extents
   }
+  xExtents2 = xExtents2.map(el => (new Date(el.getTime() + 1000*60*30*dependentGraphOffset)));
   function onZoomTiti(zoomDir) {
     props.updateXExtends({
       id: idRoot,
@@ -140,7 +153,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
       {showHistorical
       && (
       <>  
-      <div>
+      <div id="PaersonChart">
         <ChartCanvas
           id={idRoot}
           height={height / 3}
@@ -159,12 +172,28 @@ const PearsonChart = React.forwardRef((props, ref) => {
           ref={ref}
         >
           <Chart id={id1} yExtents={(d) => [d.paerson]}>
+            <ClickCallback
+              onContextMenu={(props) => {shiftDependendGraph(props)}}
+            />
             <XAxis axisAt='bottom' orient='bottom' ticks={16} stroke='#B2B5BE' tickStroke='#B2B5BE' />
             <YAxis axisAt='right' orient='right' ticks={15} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+            <MouseCoordinateX
+              at="bottom"
+              orient="bottom"
+              displayFormat={format("i")}
+            />
+            <MouseCoordinateY
+              at="left"
+              orient="left"
+              displayFormat={format(".4f")}
+            />
             <LineSeries
+              highlightOnHover
               yAccessor={d => d.paerson}
             />
+            <CurrentCoordinate yAccessor={d => d.paerson} fill='#ff1111' />
           </Chart>
+          <CrossHairCursor stroke="#ffffff" />
         </ChartCanvas>
       </div>
       <div id="bitcoinCandle">
@@ -192,13 +221,16 @@ const PearsonChart = React.forwardRef((props, ref) => {
           height={0.5*height/3}
           origin={(w, h) => [0, h - 0.5*height/3]}
         >
+          <ClickCallback
+						onContextMenu={recalculatePearson}
+					/>
           <YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} stroke='#B2B5BE' tickStroke='#B2B5BE' />
           <MouseCoordinateY
             at='left'
             orient='left'
             displayFormat={format('.4s')}
           />
-          <BarSeries
+          {/*<BarSeries
             yAccessor={d => d.volume}
             widthRatio={0.95}
             opacity={0.5}
@@ -208,7 +240,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
                 return new Date(date.getTime() + 30 * 60 * 1000);
               },
             })}
-          />
+          />*/}
         </Chart>
         <Chart 
           id={id2} 
@@ -262,7 +294,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
             orient='left'
             displayFormat={format('.4s')}
           />
-          <BarSeries
+          {/*<BarSeries
             yAccessor={d => d.volume}
             widthRatio={0.95}
             opacity={0.5}
@@ -272,7 +304,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
                 return new Date(date.getTime() + 30 * 60 * 1000);
               },
             })}
-          />
+          />*/}
         </Chart>
         <Chart 
           id={id4} 
