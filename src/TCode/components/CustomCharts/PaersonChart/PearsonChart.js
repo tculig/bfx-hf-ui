@@ -15,10 +15,20 @@ import GenericChartPanel from './GenericChartPanel'
 /* eslint react/prop-types: 0 */
 
 const PearsonChart = React.forwardRef((props, ref) => {
+  const dummyPaerson=[{
+    offset: -1,
+    paerson: 0
+  },{
+    offset: 0,
+    paerson: 0
+  },{
+    offset: 1,
+    paerson: 0
+  }]
   const [state, setState] = useState({
     historicalData1: [],
     historicalData2: [],
-    paersonData: [],
+    paersonData: dummyPaerson,
     showHistorical: false,
     idRoot: uuidv4(),
     id1: uuidv4(),
@@ -26,12 +36,12 @@ const PearsonChart = React.forwardRef((props, ref) => {
     id3: uuidv4(),
     id4: uuidv4(),
   });
-
+  const dataSetSize = 1000;
   async function fetchHistoricalData(ticker) {
     const result = fetch(`http://localhost:3001/getCandles?ticker=${ticker}`).then(response => { return response.json() })
       .then(data => {
         const processedData = []
-        for (let i = 0; i < 1000; i++) {
+        for (let i = 0; i < dataSetSize; i++) {
           const dataPoint = data[i];
           processedData.push({
             date: new Date(dataPoint[0]),
@@ -47,6 +57,26 @@ const PearsonChart = React.forwardRef((props, ref) => {
       });
     return result
   }
+
+
+  const pcorr = (x, y) => {
+    let sumX = 0,
+      sumY = 0,
+      sumXY = 0,
+      sumX2 = 0,
+      sumY2 = 0;
+    const minLength = x.length = y.length = Math.min(x.length, y.length),
+      reduce = (xi, idx) => {
+        const yi = y[idx];
+        sumX += xi;
+        sumY += yi;
+        sumXY += xi * yi;
+        sumX2 += xi * xi;
+        sumY2 += yi * yi;
+      }
+    x.forEach(reduce);
+    return (minLength * sumXY - sumX * sumY) / Math.sqrt((minLength * sumX2 - sumX * sumX) * (minLength * sumY2 - sumY * sumY));
+  };
 
   function corr(d1, d2) {
     const { min, sqrt } = Math;
@@ -66,7 +96,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
     return (mulSum - (sum1 * sum2) / n) / dense;
   }
 
-  function processPaerson(dataset1, dataset2, offsetMax, offsetWindow) {
+  /*function processPaerson(dataset1, dataset2, offsetMax, offsetWindow) {
     const paersonData = [];
     for (let offset = -offsetMax; offset <= offsetMax; offset++) {
       const d1 = [];
@@ -76,26 +106,52 @@ const PearsonChart = React.forwardRef((props, ref) => {
         d2.push(dataset2[i + offset].close);
       }
       const per = corr(d1, d2);
+      /*const cpor = pcorr(d1, d2);
+      console.log(per);
+      console.log(cpor);*//*
       paersonData.push({
         offset,
         paerson: per,
       });
     }
     return paersonData;
-  }
+  }*/
   const data1 = useRef();
   const data2 = useRef();
   const offsetRef = useRef([0, 500]);
-  const intervalRef = useRef();
+  const maxOffset = 100;
+  const bitcoinDataShowing = useRef();
+  // const intervalRef = useRef();
   const [dependentGraphOffset, setDependentGraphOffset] = useState(0);
 
-  async function runAsync() {
-    data1.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[0]].restID)
-    data2.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[1]].restID)
+  const { showHistorical, id1, idRoot, id2, id3, id4 } = state;
+  const { type, width, ratio } = props
+
+  const xAccessorPaerson = (d) => { return d?.offset }
+  const dummyPaersonX = { offset: 0 }
+  const startPaerson = xAccessorPaerson(state.paersonData[0] || dummyPaersonX)
+  const endPaerson = xAccessorPaerson(state.paersonData[state.paersonData.length - 1] || dummyPaersonX)
+  let xExtentsPaerson = [startPaerson, endPaerson]
+
+   const xAccessor = (d) => { return d.date }
+  const dummy = { date: new Date() }
+  const start1 = xAccessor(state.historicalData1[maxOffset] || dummy)
+  const end1 = xAccessor(state.historicalData1[state.historicalData1.length - maxOffset-1] || dummy)
+
+  let xExtents1 = [start1, end1]
+  let xExtents2 = [start1, end1]
+  if (props.xExtentsCommon != null) {
+      xExtents2 = props.xExtentsCommon.extents
+  }
+  const xExtents2Moved = xExtents2.map(el => (new Date(el.getTime() + 1000*60*30*dependentGraphOffset)));
+
+  /*async function recalculatePearson() {
+    console.log(xExtents2);
+    console.log(xExtents2Moved);
     intervalRef.current = setInterval(() => {
-      const paersonResults = processPaerson(data1.current, data2.current, 100, offsetRef.current)
+      const paersonResults = processPaerson(data1.current, data2.current, 200, offsetRef.current)
       offsetRef.current[0]++
-      console.log(`${offsetRef.current[0]} ${data1.current[offsetRef.current[0]].date} ${data1.current[offsetRef.current[0] + offsetRef.current[1]].date}`)
+      //console.log(`${offsetRef.current[0]} ${data1.current[offsetRef.current[0]].date} ${data1.current[offsetRef.current[0] + offsetRef.current[1]].date}`)
       if (offsetRef.current[0] > 0) {
         clearInterval(intervalRef.current)
       }
@@ -107,40 +163,96 @@ const PearsonChart = React.forwardRef((props, ref) => {
         showHistorical: true,
       }))
     }, 100);
+  }*/
+
+  async function recalculatePearson() {
+    const first = bitcoinDataShowing.current[0];
+    const last = bitcoinDataShowing.current[bitcoinDataShowing.current.length-1];
+    const dataset2 = data2.current;
+    let startIndex = 0;
+    let endIndex = dataset2.length - 1;
+    for(let i = 0; i < dataset2.length; i++){
+      if(dataset2[i].date.getTime() === first.date.getTime()) {
+        startIndex = i;
+      }else if(dataset2[i].date.getTime() === last.date.getTime()) {
+        endIndex = i;
+        break;
+      }
+    }
+    const mOffset = Math.max(0, Math.min(maxOffset, startIndex, dataset2.length - endIndex -1));
+    const paersonResults = processPaerson(bitcoinDataShowing.current, data2.current, mOffset, startIndex)
+
+    if(paersonResults){
+      setState(() => ({
+        ...state,
+        paersonData: paersonResults
+      }))
+    }else{
+      setState(() => ({
+        ...state,
+        paersonData: dummyPaerson
+      }))
+      
+    }
   }
+
+  function processPaerson(dataset1, dataset2, offsetRange, dataset2StartIndex ) {
+    console.log(offsetRange);
+    const paersonData = [];
+    if(offsetRange === 0) return false;
+    for (let offset = -offsetRange; offset <= offsetRange; offset++) {
+      const d1 = [];
+      const d2 = [];
+      for (let i = 0; i < dataset1.length; i++) {
+        d1.push(dataset1[i].close);
+        d2.push(dataset2[i + dataset2StartIndex + offset].close);
+      }
+      const per = corr(d1, d2);
+      paersonData.push({
+        offset,
+        paerson: per,
+      });
+    }
+    return paersonData;
+  }
+
+
   useEffect(() => {
-    runAsync();
+    async function fetchAsync() {
+      data1.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[0]].restID)
+      data2.current = await fetchHistoricalData(props.activeMarket[GenericChartPanel.marketIDS[1]].restID)
+      const arr1Length = data1.current.length;
+      bitcoinDataShowing.current = data1.current.filter(function(value, index, arr){ 
+        return (index >= maxOffset && index < arr1Length - maxOffset);
+      });
+      setState(() => ({
+        ...state,
+        historicalData1: data1.current,
+        historicalData2: data2.current,
+        showHistorical: true,
+      }))
+    }
+    fetchAsync();
   }, [props.activeMarket])
 
-  function recalculatePearson() {
-    const xExtentsCurrent = props.xExtentsCommon.extents;
-    console.log(xExtentsCurrent)
-  }
+  useEffect(() => {
+    async function fetchAsync() {
+      recalculatePearson();
+    }
+    if(state.historicalData1.length>0){
+      fetchAsync();
+    }
+  }, [state.historicalData1])
 
   function shiftDependendGraph(props) {
     setDependentGraphOffset(props.currentItem.offset);
   }
-
-  const { showHistorical, id1, idRoot, id2, id3, id4 } = state;
-  const { type, width, ratio } = props
-
-  const xAccessorPaerson = (d) => { return d?.offset }
-  const dummyPaerson = { offset: 0 }
-  const startPaerson = xAccessorPaerson(state.paersonData[0] || dummyPaerson)
-  const endPaerson = xAccessorPaerson(state.paersonData[state.paersonData.length - 1] || dummyPaerson)
-  let xExtentsPaerson = [startPaerson, endPaerson]
-
-  const xAccessor = (d) => { return d.date }
-  const dummy = { date: new Date() }
-  const start1 = xAccessor(state.historicalData1[0] || dummy)
-  const end1 = xAccessor(state.historicalData1[state.historicalData1.length - 1] || dummy)
-
-  let xExtents1 = [start1, end1]
-  let xExtents2 = [start1, end1]
-  if (props.xExtentsCommon != null) {
-      xExtents2 = props.xExtentsCommon.extents
+  function btcRightClick(props) {
+    bitcoinDataShowing.current = props.plotData;
+    recalculatePearson();
+    setDependentGraphOffset(0);
   }
-  xExtents2 = xExtents2.map(el => (new Date(el.getTime() + 1000*60*30*dependentGraphOffset)));
+
   function onZoomTiti(zoomDir) {
     props.updateXExtends({
       id: idRoot,
@@ -222,7 +334,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
           origin={(w, h) => [0, h - 0.5*height/3]}
         >
           <ClickCallback
-						onContextMenu={recalculatePearson}
+						onContextMenu={(props) => {btcRightClick(props)}}
 					/>
           <YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} stroke='#B2B5BE' tickStroke='#B2B5BE' />
           <MouseCoordinateY
@@ -278,7 +390,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
           xAccessor={xAccessor}
           displayXAccessor={xAccessor}
           xScale={scaleTime()}
-          xExtents={xExtents2}
+          xExtents={xExtents2Moved}
           ref={ref}
           onZoomTiti={onZoomTiti}
         >
