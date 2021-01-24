@@ -7,7 +7,7 @@ import { Chart, ChartCanvas } from 'react-stockcharts/';
 import { XAxis, YAxis } from 'react-stockcharts/lib/axes';
 import { fitWidth } from 'react-stockcharts/lib/helper';
 import { timeIntervalBarWidth } from 'react-stockcharts/lib/utils';
-import { LineSeries, CandlestickSeries } from 'react-stockcharts/lib/series';
+import { LineSeries, CandlestickSeries, BarSeries } from 'react-stockcharts/lib/series';
 import { ClickCallback } from "react-stockcharts/lib/interactive";
 import { MouseCoordinateY, MouseCoordinateX, CrossHairCursor, CurrentCoordinate } from 'react-stockcharts/lib/coordinates';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,7 +36,8 @@ const PearsonChart = React.forwardRef((props, ref) => {
     id3: uuidv4(),
     id4: uuidv4(),
   });
-  const dataSetSize = 1000;
+  const dataSetSize = 2000;
+  const maxOffset = 200;
   async function fetchHistoricalData(ticker) {
     const result = fetch(`http://localhost:3001/getCandles?ticker=${ticker}`).then(response => { return response.json() })
       .then(data => {
@@ -119,7 +120,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
   const data1 = useRef();
   const data2 = useRef();
   const offsetRef = useRef([0, 500]);
-  const maxOffset = 100;
+
   const bitcoinDataShowing = useRef();
   // const intervalRef = useRef();
   const [dependentGraphOffset, setDependentGraphOffset] = useState(0);
@@ -197,7 +198,6 @@ const PearsonChart = React.forwardRef((props, ref) => {
   }
 
   function processPaerson(dataset1, dataset2, offsetRange, dataset2StartIndex ) {
-    console.log(offsetRange);
     const paersonData = [];
     if(offsetRange === 0) return false;
     for (let offset = -offsetRange; offset <= offsetRange; offset++) {
@@ -342,7 +342,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
             orient='left'
             displayFormat={format('.4s')}
           />
-          {/*<BarSeries
+          <BarSeries
             yAccessor={d => d.volume}
             widthRatio={0.95}
             opacity={0.5}
@@ -352,7 +352,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
                 return new Date(date.getTime() + 30 * 60 * 1000);
               },
             })}
-          />*/}
+          />
         </Chart>
         <Chart 
           id={id2} 
@@ -406,7 +406,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
             orient='left'
             displayFormat={format('.4s')}
           />
-          {/*<BarSeries
+          <BarSeries
             yAccessor={d => d.volume}
             widthRatio={0.95}
             opacity={0.5}
@@ -416,7 +416,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
                 return new Date(date.getTime() + 30 * 60 * 1000);
               },
             })}
-          />*/}
+          />
         </Chart>
         <Chart 
           id={id4} 

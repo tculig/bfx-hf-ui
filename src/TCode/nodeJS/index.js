@@ -173,7 +173,7 @@ const url = "https://api-pub.bitfinex.com/v2";
 const queryParams = "limit=10000"; // Change these based on relevant query params
 
 async function fetchBitfinex(ticker, res) {
-  const pathParams = `candles/trade:30m:${ticker}/hist`; // Change these based on relevant path params. /last for last candle
+  const pathParams = `candles/trade:1m:${ticker}/hist`; // Change these based on relevant path params. /last for last candle
   try {
     const queryString = `${url}/${pathParams}?${queryParams}`;
     console.log(queryString);
