@@ -10,7 +10,7 @@ export default class GenericChartPanel extends React.Component {
     static marketIDS = ['market1', 'market2']
     state = {
     }
-    market1Filtered = ['tBTCUSD', 'tETHBTC'];
+    market1Filtered = ['tBTCUSD', 'tETHBTC', 'tADAUST', 'tADABTC'];
     market2Filtered = ['tETHBTC', 'tETHUST', 'tXRPBTC', 'tXRPUST', 'tADABTC', 'tADAUST', 'tLINK:UST', 'tLTCBTC', 'tXLTCUST',
       'tXLMCBTC', 'tXLMCUST', 'tXMRBTC', 'tXMRUST', 'tEOSBTC', 'tEOSUST', 'tEOSETH', 'tNEOBTC', 'tNEOETH'];
 
@@ -24,10 +24,9 @@ export default class GenericChartPanel extends React.Component {
       } = savedState
       const { allMarkets } = this.props
       const markets = allMarkets[props.activeExchange] || []
-      const allowedMarkets1 = markets.filter(el => this.market1Filtered.includes(el.restID))
-      const allowedMarkets2 = markets.filter(el => this.market2Filtered.includes(el.restID))
-      // allowedMarkets1.reverse()
-      // allowedMarkets2.reverse()
+      const allowedMarkets1 = markets.filter(el => el.restID === 'tBTCUSD')
+      const allowedMarkets2 = markets.filter(el => el.restID === 'tADAUST')
+      // const allowedMarkets2 = markets.filter(el => this.market2Filtered.includes(el.restID))
       const activeMarketInit1 = allowedMarkets1[0]
       const activeMarketInit2 = allowedMarkets2[0]
       this.state = {

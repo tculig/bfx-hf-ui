@@ -23,7 +23,7 @@ import {
 } from "react-stockcharts/lib/coordinates";
 import { v4 as uuidv4 } from "uuid";
 import GenericChartPanel from "./GenericChartPanel";
-import IntersectionBasic from "../../TradingStrategy/IntersectionBasic";
+import BelowBasic from "../../TradingStrategy/BelowBasic";
 
 const _ = require('lodash'); 
 const PearsonChart = React.forwardRef((props, ref) => {
@@ -201,16 +201,19 @@ const PearsonChart = React.forwardRef((props, ref) => {
 
   // 
   function paddData(trim) {
-    let dataset1 = _.cloneDeep(data1.current);
-    let dataset2 = _.cloneDeep(data2.current);
-     let flipped = false;
+    let dataset1;
+    let dataset2;
+    let flipped = false;
     let result1 = [];
     let result2 = [];
     //dataset1 is always the one with the later start date
-    if(dataset1[0].date.getTime()<dataset2[0].date.getTime()){
+    if(data1.current[0].date.getTime()<data2.current[0].date.getTime()){
       dataset1 = _.cloneDeep(data2.current);
       dataset2 = _.cloneDeep(data1.current);
       flipped = true;
+    }else{
+      dataset1 = _.cloneDeep(data1.current);
+      dataset2 = _.cloneDeep(data2.current);
     }
     const firstDateTime = dataset1[0].date.getTime();
     const lastDateTime = dataset1[dataset1.length-1].date.getTime();
@@ -233,7 +236,8 @@ const PearsonChart = React.forwardRef((props, ref) => {
       }else{
         result1.push({
           ...lastFromDataset1,
-          date: thisDate
+          date: thisDate,
+          volume: 0
         });
       }
       // dataset2
@@ -244,7 +248,8 @@ const PearsonChart = React.forwardRef((props, ref) => {
       }else{
         result2.push({
           ...lastFromDataset2,
-          date: thisDate
+          date: thisDate,
+          volume: 0
         });
       }
       thisDate = new Date(currentDateTime + 60000)
@@ -267,6 +272,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
       const factor = data1.current[0].close / data2.current[0].close;
       for(let i=0;i<data1.current.length;i++){
         data1.current[i].close2 = data2.current[i].close*factor;
+        data1.current[i].volume2 = data2.current[i].volume;
       }
 
       const arr1Length = data1.current.length;
@@ -296,8 +302,10 @@ const PearsonChart = React.forwardRef((props, ref) => {
     //setDependentGraphOffset(0);
     for(let i=0;i<data1.current.length;i++){
       data1.current[i].close2 = data2.current[i].close*factor;
+      data1.current[i].close3 = data2.current[i].close*factor - data1.current[i].close + bitcoinDataShowing.current[0].close;
     }
-    const [buyPoints, sellPoint] = IntersectionBasic(data1.current);
+    const [buyPoints, sellPoint, rebasedDataset] = BelowBasic(data1.current);
+    data1.current = rebasedDataset;
     buyPoints.forEach((value)=>{
       data1.current[value].buyPoint = data1.current[value].close2;
     });
@@ -305,7 +313,11 @@ const PearsonChart = React.forwardRef((props, ref) => {
       data1.current[value].sellPoint = data1.current[value].close2;
     });
     hasPoints.current = true;
-    recalculatePearson();
+    setState(() => ({
+      ...state,
+      historicalData: data1.current
+    }));
+    //recalculatePearson();
   }
 
   const { height } = props;
@@ -397,7 +409,7 @@ const PearsonChart = React.forwardRef((props, ref) => {
             >
               <Chart
                 id="id2"
-                yExtents={(d) => [d.close, d.close2]}
+                yExtents={(d) => [d.close, d.close2, d.close3]}
                 height={(3 * 0.6 * height) / 3}
                 origin={(w, h) => [0, h - (3 * 0.6 * height) / 3]}
               >
@@ -430,21 +442,74 @@ const PearsonChart = React.forwardRef((props, ref) => {
                   highlightOnHover
                   yAccessor={(d) => d.close2}
                 />
+                {/*<LineSeries
+                  stroke="red"
+                  highlightOnHover
+                  yAccessor={(d) => d.close3}
+                />*/}
                 {hasPoints.current && 
                 <>
                   <ScatterSeries
                     yAccessor={d => d.buyPoint}
                     marker={SquareMarker}
-                    markerProps={{ width: 18, stroke: "green", fill: "green" }}
+                    markerProps={{ width: 12, stroke: "green", fill: "green" }}
                  />
                  <ScatterSeries
                     yAccessor={d => d.sellPoint}
                     marker={SquareMarker}
-                    markerProps={{ width: 18, stroke: "red", fill: "red" }}
+                    markerProps={{ width: 12, stroke: "red", fill: "red" }}
                  />
                 </>}
-
               </Chart>
+              <Chart
+                  id={"id23"}
+                  yExtents={[d => d.volume2]}
+                  height={0.5*height/3}
+                  origin={(w, h) => [0, h - 0.5*height/3]}
+                >
+                  <YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+                  <MouseCoordinateY
+                    at='left'
+                    orient='left'
+                    displayFormat={format('.4s')}
+                  />
+                  <BarSeries
+                    yAccessor={d => d.volume2}
+                    widthRatio={0.95}
+                    opacity={0.5}
+                    fill={d => ((d.volume2 > 26000 && d.volume2 < 34000) ? 'orange' : 'grey')}
+                    width={timeIntervalBarWidth({
+                      offset: (date) => {
+                        return new Date(date.getTime() + 60 * 1000);
+                      },
+                    })}
+                  />
+                </Chart>
+               {/*} <Chart
+                  id={"id234"}
+                  yExtents={[d => d.volume]}
+                  height={0.5*height/3}
+                  origin={(w, h) => [0, h - 0.5*height/3]}
+                >
+                  <YAxis axisAt='left' orient='left' ticks={5} tickFormat={format('.2s')} stroke='#B2B5BE' tickStroke='#B2B5BE' />
+                  <MouseCoordinateY
+                    at='left'
+                    orient='left'
+                    displayFormat={format('.4s')}
+                  />
+                  <BarSeries
+                    yAccessor={d => d.volume}
+                    widthRatio={0.95}
+                    opacity={0.5}
+                    fill={'green'}
+                    width={timeIntervalBarWidth({
+                      offset: (date) => {
+                        return new Date(date.getTime() + 60 * 1000);
+                      },
+                    })}
+                  />
+                </Chart>
+                  */}
             </ChartCanvas>
           </div>
         </>

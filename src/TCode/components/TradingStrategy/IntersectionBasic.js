@@ -4,12 +4,14 @@ import { rebase } from "./utils";
 const _ = require("lodash");
 
 export default function IntersectionBasic(dataIn) {
+  const bitfinexFee = 0.002;
   const minimumCountRequiredToTrigger1 = 10;
   const minimumCountRequiredToTrigger2 = 2;
-  const maxHoldingTime = 180;
+  const maxHoldingTime = 480;
   const maxIdleTime = 180;
-  const trigger3Factor = 1.02;
-  const sellFactor = 0.95;
+  const trigger3Factor = 1.01;
+  const sellFactor = 0.99;
+  const targetProfit = 1.03;
   let lowestPrice = 999999999;
   let highestPrice = 0;
   let currentTrigger1Count = 0;
@@ -80,7 +82,7 @@ export default function IntersectionBasic(dataIn) {
         if(close2>=(trigger3Factor*lowestPrice) && !readyForBuySignal3){
             //console.log("BUY");
             buyPoints.push(i);
-            buyPrice = close2;
+            buyPrice = (1+bitfinexFee)*close2;
             holding = true;
             readyForBuySignal3 = true;
         }
@@ -90,21 +92,30 @@ export default function IntersectionBasic(dataIn) {
         if(close2>highestPrice){
             highestPrice = close2;
         }
-        if(close2<=(sellFactor*highestPrice) && holding){
-            //console.log("SELL")
-            sellPoints.push(i);
-            profitFactor *= (close2/buyPrice);
-            holding = false;
-            dataset = rebase(dataset, i);
-            idleTime = 0;
+        const currentProfit = (1-bitfinexFee)*(close2/buyPrice);
+        if(currentProfit<targetProfit){
+            if(close2<=(buyPrice) && holding){
+                //console.log("SELL")
+                sellPoints.push(i);
+                profitFactor *= currentProfit;
+                holding = false;
+                idleTime = 0;
+            }
+        }else{
+            if(close2<=(sellFactor*highestPrice) && holding){
+                //console.log("SELL")
+                sellPoints.push(i);
+                profitFactor *= currentProfit;
+                holding = false;
+                idleTime = 0;
+            }
         }
-    }
+     }
 
     if(holding && holdingTime > maxHoldingTime){
         sellPoints.push(i);
-        profitFactor *= (close2/buyPrice);
+        profitFactor *= (1-bitfinexFee)*(close2/buyPrice);
         holding = false;
-        dataset = rebase(dataset, i);
         idleTime = 0;
     }
 
